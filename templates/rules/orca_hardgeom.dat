@@ -1,0 +1,5 @@
+%geom
+    Calc_Hess true # Request an exact Hessian in the first optimization step
+    NumHess true #  Request the numerical exact Hessian
+    Recalc_Hess 5 # Recalculate the exact Hessian every 5 steps.
+end

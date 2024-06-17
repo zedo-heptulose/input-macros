@@ -1,0 +1,7 @@
+{0} //job instructions
+%maxcore 4000
+{1} //pal portion
+{2} //scf portion
+{3} //geometry settings portion
+{4} //charge/mult and coordinates
+

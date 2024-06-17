@@ -1,0 +1,5 @@
+%scf
+   maxiter 200
+   DIISMaxEq 10
+   directresetfreq 10
+end

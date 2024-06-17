@@ -1,0 +1,43 @@
+# import input_maker as ip
+# ip.make_orca_input('stgap1.inp','!R2SCAN3C OPT FREQ','8','templates/orca_hardscf.dat','templates/orca_hardgeom.dat','0  1','xyz_coords/mikestgap1.xyz')
+
+
+#//////////////////// MIKE'S MOLECULES ///////////////////////////////////
+stgap1_geom = ('structure_1','xyz_coords/mikestgap1.xyz')
+stgap2_geom = ('structure_2','xyz_coords/structure_2_fixed.xyz')
+stgap3_geom = ('structure_3','xyz_coords/structure_3_fixed.xyz')
+stgap4_geom = ('structure_4','xyz_coords/structure_4_fixed.xyz')
+stgap5_geom = ('structure_5','xyz_coords/structure_5_fixed.xyz')
+stgap6_geom = ('structure_6','xyz_coords/structure_6_fixed.xyz')
+stgap7_geom = ('structure_7','xyz_coords/stconf7.xyz')
+stgap8_geom = ('structure_8','xyz_coords/stconf8.xyz')
+
+mike_molecules = dict([stgap1_geom, stgap2_geom, stgap3_geom, stgap4_geom, stgap5_geom, stgap6_geom, stgap7_geom, stgap8_geom])
+
+#//////////////////// FIRST ALLENE COMPUTATION /////////////////////////////
+
+co2 = ('co2','xyz_coords/allenes/co2.xyz')
+cumulene = ('cumulene','xyz_coords/allenes/cumulene.xyz')
+hexynedioic = ('hexynedioic','xyz_coords/allenes/better_hex_geom.xyz')
+intermediate = ('intermediate','xyz_coords/allenes/intermediate.xyz')
+
+singlet_molecules = dict([co2, cumulene])
+triplet_molecules = dict([hexynedioic, intermediate])
+
+#//////////////////// SECOND ALLENE COMPUTATION /////////////////////////////
+
+allene = ('allene','xyz_coords/allenes/allene.xyz')
+long_allene = ('long_allene','xyz_coords/allenes/long_allene.xyz')
+ethylene = ('ethylene','xyz_coords/allenes/ethylene.xyz')
+cumulene = ('cumulene','xyz_coords/allenes/cumulene.xyz')
+
+molecules = dict([allene, long_allene, ethylene, cumulene])
+
+#////////////////////// REFERENCE DATA ////////////////////////////////////////////
+
+
+
+
+
+
+#////////////////////// BAND GAPS ////////////////////////////////////////////

@@ -1,0 +1,13 @@
+!generated with infile_maker
+%mem = 10GB
+%nprocs = 14
+{0} //check path
+
+{1} //instructions
+
+{2} //title
+
+{3} //spin/mulitiplicty
+{4} //coordinates
+
+{5} //basis set information

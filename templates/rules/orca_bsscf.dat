@@ -1,0 +1,4 @@
+%scf
+   maxiter 150
+   brokensym 1,1
+end

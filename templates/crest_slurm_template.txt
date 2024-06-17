@@ -1,0 +1,18 @@
+#!/bin/bash
+
+{0} //job type like #SBATCH --job-name=STGAP8
+
+#SBATCH --mail-user=gdb20@fsu.edu
+#SBATCH --mail-type=NONE
+
+{1} {1} //num cores like #SBATCH -n 8
+#SBATCH -N 1 
+
+#SBATCH -p genacc_q
+
+{2} // job time like #SBATCH -t 0-05:00:00
+{3} // memory like #SBATCH --mem=32GB
+
+module load 
+
+{4} // path to orca, input and output filenames
