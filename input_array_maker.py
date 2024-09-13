@@ -28,30 +28,48 @@ b3lyp_6311_p_g2dp_optfreq = ('b3lyp_6311pg2dp_of', '!B3LYP 6-311+G(2d,p) OPT FRE
 b3lyp_aug_cc_pvtz_d3bj_optfreq = ('b3lyp_aug_cc_pvtz_d3bj_of', '!B3LYP aug-cc-pVTZ D3BJ OPT FREQ')
 b3lyp_def2_tzvp_d3bj_optfreq = ('b3lyp_def2_tzvp_d3bj_of', '!B3LYP def2-TZVP D3BJ OPT FREQ')
 
-hf_3c_optfreq = ('hf_3c_of','!HF-3C OPT NUMFREQ')
+hf_3c_optnumfreq = ('hf_3c_of','!HF-3C OPT NUMFREQ')
+hf_3c_opt = ('hf_3c_opt','!HF-3C OPT')
+
+uks_r2scan3c = ('uks_r2scan_3c', '!UKS R2SCAN-3C OPT FREQ AUTOAUX UNO')
+uks_b973c = ('uks_b97_3c', '!UKS B97-3C OPT FREQ AUTOAUX UNO')
+uks_pbeh3c = ('uks_pbeh_3c', '!UKS  PBEh-3C OPT FREQ AUTOAUX UNO')
+
+
+uks_r2scan3c_opt = ('opt_uks_r2scan_3c', '!UKS R2SCAN-3C OPT AUTOAUX UNO')
+
+uks_r2scan3c_freq = ('freq_uks_r2scan_3c', '!UKS R2SCAN-3C FREQ AUTOAUX UNO')
+
+uks_cam_b3lyp_631g_dp = ('uks_cam_b3lyp_631gdp', '!UKS CAM-B3LYP 6-31G(d,p) AUTOAUX OPT FREQ RIJCOSX UNO')
+uks_b3lyp_631_p_g_dp = ('uks_b3lyp_631pgdp', '!UKS B3LYP 6-31+G(d,p) OPT FREQ AUTOAUX RIJCOSX UNO')
+
+
 
 #memory settings
-v_high_mem = ('16','2-00:00:00', '64GB')
-high_mem = ('8','2-00:00:00', '32GB')
+v_high_mem = ('12','5-00:00:00', '48GB')
+high_mem = ('8','3-00:00:00', '32GB')
 med_mem = ('4','2-00:00:00', '16GB')
-low_mem = ('2','2-00:00:00', '8GB')
-lowest_mem = ('1','2-00:00:00', '4GB')
+low_mem = ('2','1-00:00:00', '8GB')
+lowest_mem = ('1','1-00:00:00', '4GB')
 
 #SCF settings
-hard_bs_scf = 'templates/orca_hardscf_bs.dat'
-bs_scf = 'templates/orca_bsscf.dat'
-hard_scf = 'templates/orca_hardscf.dat'
+hard_bs_scf = 'templates/scfgeom/orca_hardscf_bs.dat'
+bs_scf = 'templates/scfgeom/orca_bsscf.dat'
+hard_scf = 'templates/scfgeom/orca_hardscf.dat'
+autofail_scf = 'templates/scfgeom/orca_autofailscf.dat'
 normal_scf = None
 
 #geometry settings
 hard_geom = 'templates/orca_hardgeom.dat'
 normal_geom = None
 
+
 #combined settings
 normal_scfgeom = ('', (normal_scf, normal_geom))
-bs_normal_scfgeom = ('bs', (bs_scf, normal_geom))
+bs_normal_scfgeom = ('brsym', (bs_scf, normal_geom))
 bs_strict_scfgeom = ('bs_strict', (hard_bs_scf, hard_geom))
 hard_scfgeom = ('hard_scfgeom', (hard_scf, hard_geom))
+autofail = ('autofail', (autofail_scf, normal_geom))
 
 #charge and multiplicity settings
 neu_singlet = ('singlet', '0  1')
@@ -92,7 +110,9 @@ def make_many_orca_rcc_inputs(folder, mem_setts, instructs, scf_geom_setts, char
         scf_geom_setts = {'' : scf_geom_setts}
     if type(charge_mults) is not dict:
         charge_mults = {'' : charge_mults}
-        
+    
+    batchfile_lines = []
+
     os.makedirs(folder, exist_ok=True)
     for i_key in instructs:
         for sg_key in scf_geom_setts:
@@ -103,8 +123,12 @@ def make_many_orca_rcc_inputs(folder, mem_setts, instructs, scf_geom_setts, char
                                         scf_geom_setts[sg_key], charge_mults[c_key],
                                         molecules[m_key])
                     os.rename(name, os.path.join(folder, name))
-    get_master_shell_script(folder)
+                    batchfile_lines.append(f'{name}|')
     
+    get_master_shell_script(folder)
+    return batchfile_lines
+
+
 def molecule_dict_from_directory(directory):
     '''
     get all template molecules in the directory
@@ -114,8 +138,10 @@ def molecule_dict_from_directory(directory):
     '''
     molecules = {}
     for root, dirs, files in os.walk(directory):
+        print(root)
         for file in files:
-            if file.endswith('.xyz'):
+            print(file)
+            if file.endswith('.xyz') or file.endswith('.out'):
                 basename = os.path.splitext(file)[0]
                 molecule = os.path.join(root, file)
                 molecules[basename] = (molecule)

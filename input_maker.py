@@ -1,12 +1,26 @@
 import re
 
-template_path = '/home/zedo_heptulose/programming/Chemistry/RCC/input_macros/templates/'
+template_path = '/home/zedo_heptulose/programming/Chemistry/INPUT/FormatJobs/input_macros/templates/'
 
 def read_xyz(xyz_filename):
     with open(xyz_filename, 'r') as xyz:
         lines = xyz.readlines()
         return lines[2:]
     
+def xyz_from_orca_output(orca_output_filename):
+    with open(orca_output_filename, 'r') as orca_output:
+        lines = orca_output.readlines()
+        start = None
+        end = None
+        for i, line in enumerate(lines):
+            if 'CARTESIAN COORDINATES (ANGSTROEM)' in line:
+                start = i + 2
+            if 'CARTESIAN COORDINATES (A.U.)' in line:
+                end = i - 2
+        if start and end:
+            return lines[start:end]
+        else:
+            return None
     
     
 def format_input_file(rules_filename, write_filename, list_of_fields):
@@ -64,6 +78,7 @@ def make_gaussian_input(gaussian_filename, instructions, title, check_path = Non
     
 def make_orca_input(orca_fn, instructions, nprocs, scf_fn, geom_fn, charge_mult, xyz_fn):
     '''
+    MEMORY : MUST HAVE 4 x nprocs GB
     function that uses file formatter to make orca input
     takes as parameters:
     orca filename (filename of .inp file, .inp extension optional)
@@ -78,6 +93,7 @@ def make_orca_input(orca_fn, instructions, nprocs, scf_fn, geom_fn, charge_mult,
     
     if nprocs:
         nprocs_lines = []
+        nprocs_lines.append('%MaxCore 3000')
         nprocs_lines.append(r'%pal')
         nprocs_lines.append(' nprocs ' + str(nprocs))
         nprocs_lines.append('end')
@@ -97,7 +113,10 @@ def make_orca_input(orca_fn, instructions, nprocs, scf_fn, geom_fn, charge_mult,
         geom_lines = None
             
     #XYZ BLOCK
-    xyz_lines = read_xyz(xyz_fn)
+    if (xyz_fn.endswith('.xyz')):
+        xyz_lines = read_xyz(xyz_fn)
+    if (xyz_fn.endswith('.out')):
+        xyz_lines = xyz_from_orca_output(xyz_fn)
     cm_line = '* XYZ ' + charge_mult
     coord_lines = []
     coord_lines.append(cm_line)

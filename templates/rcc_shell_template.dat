@@ -3,7 +3,7 @@
 {0} //job type like #SBATCH --job-name=STGAP8
 
 #SBATCH --mail-user=gdb20@fsu.edu
-#SBATCH --mail-type=FAIL
+#SBATCH --mail-type=NONE
 
 {1} //num cores like #SBATCH -n 8
 #SBATCH -N 1
@@ -13,6 +13,6 @@
 {2} // job time like #SBATCH -t 0-05:00:00
 {3} // memory like #SBATCH --mem=32GB
 
-module load gnu openmpi orca
+module load gnu openmpi orca/6.0.0
 
 {4} // path to orca, input and output filenames
