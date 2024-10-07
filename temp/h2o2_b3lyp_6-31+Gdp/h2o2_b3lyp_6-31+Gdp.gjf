@@ -1,0 +1,13 @@
+%nprocshared=1
+%mem=2gb
+%chk=/gpfs/home/gdb20/code/input_macros/temp/h2o2_b3lyp_6-31+Gdp/h2o2_b3lyp_6-31+Gdp.chk
+#ub3lyp/6-31g(d,p) OPT FREQ
+
+created with so and so tool
+
+0 1
+O -1.682 2.047 0.000
+O -0.129 1.364 0.000
+H -2.824 1.447 0.000
+H 0.9176 2.200 0.000
+

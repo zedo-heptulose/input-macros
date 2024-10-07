@@ -1,0 +1,12 @@
+#!/bin/bash
+
+#SBATCH --job-name=oh_radical_b3lyp_6-311+Gdp
+#SBATCH -n 4
+#SBATCH -N 1
+#SBATCH -p genacc_q
+#SBATCH -t 0-00:05:00
+#SBATCH --mem-per-cpu=4GB
+
+module purge
+module load gaussian16
+g16 < oh_radical_b3lyp_6-311+Gdp.gjf > oh_radical_b3lyp_6-311+Gdp.log

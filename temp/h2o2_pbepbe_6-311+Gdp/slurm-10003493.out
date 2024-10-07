@@ -1,0 +1,21 @@
+Error: segmentation violation
+   rax 0000000000000000, rbx ffffffffffffffff, rcx 0000152a6d1b44bb
+   rdx 0000000000000000, rsp 00007ffd6c7c9078, rbp 00007ffd6c7c95f0
+   rsi 000000000000000b, rdi 0000000000259547, r8  0000000080001000
+   r9  00007ffd6c7c8788, r10 0000000000000007, r11 0000000000000206
+   r12 00007ffd6c7c9638, r13 0000000000000000, r14 0000000000000000
+   r15 00000000000003e6
+  /lib64/libpthread.so.0(+0x12ce0) [0x152a6d8eace0]
+  /lib64/libc.so.6(kill+0xb) [0x152a6d1b44bb]
+  /gpfs/research/software/gaussian16/intel/g16/l101.exe() [0x493830]
+  /gpfs/research/software/gaussian16/intel/g16/l101.exe() [0x4abba1]
+  /gpfs/research/software/gaussian16/intel/g16/l101.exe() [0x4d27e7]
+  /gpfs/research/software/gaussian16/intel/g16/l101.exe() [0x4c5f3f]
+  /gpfs/research/software/gaussian16/intel/g16/l101.exe() [0x415878]
+  /gpfs/research/software/gaussian16/intel/g16/l101.exe() [0x41417d]
+  /gpfs/research/software/gaussian16/intel/g16/l101.exe() [0x40d73c]
+  /gpfs/research/software/gaussian16/intel/g16/l101.exe() [0x407563]
+  /gpfs/research/software/gaussian16/intel/g16/l101.exe() [0x4046e0]
+  /gpfs/research/software/gaussian16/intel/g16/l101.exe() [0x40461b]
+  /lib64/libc.so.6(__libc_start_main+0xf3) [0x152a6d1cbcf3]
+  /gpfs/research/software/gaussian16/intel/g16/l101.exe(sched_setaffinity+0xd9) [0x404529]

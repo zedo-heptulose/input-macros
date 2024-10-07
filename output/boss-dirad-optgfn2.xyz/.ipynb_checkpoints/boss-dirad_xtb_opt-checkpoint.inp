@@ -1,0 +1,16 @@
+! UKS
+! r2SCAN-3c
+
+%maxcore 3000
+
+%pal
+ nprocs 20
+end
+
+%scf
+ brokensym 1,1
+end
+
+
+* xyzfile 0 1 boss-dirad-optgfn2.xyz 
+

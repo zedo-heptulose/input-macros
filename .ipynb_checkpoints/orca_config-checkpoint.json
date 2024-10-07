@@ -1,0 +1,20 @@
+{
+  "path_to_ORCA": "/gpfs/research/software/orca/orca_6_0_0_shared_openmpi416/orca",
+  "pre_submit_lines": ["module load gnu/8.5.0 openmpi/4.1.6 orca/6.0.0"],
+  "post_submit_lines": null,
+  "cores": 20,
+  "mem_per_cpu_GB": 4,
+  "runtime_days": 5,
+  "jobname": "test",
+  "xyzfile": "test.xyz",
+  "uks": true,
+  "functional": "r2SCAN-3c",
+  "basis": null,
+  "auxbasis": null,
+  "densfit": null,
+  "natural_orbitals": false,
+  "grid": null,
+  "otherkeywords": [],
+  "scfblock": ["Brokensym 1,1"],
+  "otherblocks": {}
+}

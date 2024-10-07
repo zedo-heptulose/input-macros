@@ -1,0 +1,17 @@
+Error: segmentation violation
+   rax 0000000000000000, rbx ffffffffffffffff, rcx 00001460608164bb
+   rdx 0000000000000000, rsp 00007fffdcd5a138, rbp 00007fffdcd5a6b0
+   rsi 000000000000000b, rdi 000000000038e90e, r8  0000000080001000
+   r9  00007fffdcd59848, r10 0000000000000007, r11 0000000000000202
+   r12 00007fffdcd5a6f8, r13 0000000000000000, r14 0000000000000000
+   r15 00000000000003e6
+  /lib64/libpthread.so.0(+0x12ce0) [0x146060f4cce0]
+  /lib64/libc.so.6(kill+0xb) [0x1460608164bb]
+  /gpfs/research/software/gaussian16/intel/g16/l301.exe() [0x628550]
+  /gpfs/research/software/gaussian16/intel/g16/l301.exe() [0x6475f1]
+  /gpfs/research/software/gaussian16/intel/g16/l301.exe() [0x6c14c7]
+  /gpfs/research/software/gaussian16/intel/g16/l301.exe() [0x408667]
+  /gpfs/research/software/gaussian16/intel/g16/l301.exe() [0x4046e0]
+  /gpfs/research/software/gaussian16/intel/g16/l301.exe() [0x40461b]
+  /lib64/libc.so.6(__libc_start_main+0xf3) [0x14606082dcf3]
+  /gpfs/research/software/gaussian16/intel/g16/l301.exe(sched_setaffinity+0xd9) [0x404529]

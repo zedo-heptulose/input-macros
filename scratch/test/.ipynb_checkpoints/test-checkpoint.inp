@@ -1,0 +1,6 @@
+! UKS
+! r2SCAN-3c
+%maxcore 3000.0
+%scf
+ Brokensym 1,1
+end

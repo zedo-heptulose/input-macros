@@ -1,0 +1,13 @@
+! uks
+! r2scan-3c
+%maxcore 3000
+%pal
+ nprocs 20
+end
+%scf
+ maxiter 300
+ brokensym 1,1
+end
+%geom
+ maxcycle 300
+end

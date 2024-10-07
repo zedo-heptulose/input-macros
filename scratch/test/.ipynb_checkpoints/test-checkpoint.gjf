@@ -1,0 +1,11 @@
+%nprocshared=1
+%mem=2gb
+%chk=/gpfs/home/gdb20/code/input_macros/scratch/test/test.chk
+#ub3lyp 6-31g(d,p) opt freq
+
+created with so and so tool
+
+0 1
+Ne 0.0000 0.0000 0.0000
+
+
