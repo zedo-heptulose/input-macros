@@ -1,7 +1,6 @@
 ! UKS
 ! r2SCAN-3c
-! opt
-! freq
+! opt freq
 
 %maxcore 3000
 

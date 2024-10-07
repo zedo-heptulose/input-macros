@@ -1,4 +1,5 @@
 import os
+import re
 import shutil
 import json
 import helpers
@@ -9,8 +10,9 @@ GAUSSCONFIG = 'gaussian_config.json'
 
 class Input:
     def __init__(self): 
-        self.path = ""
-        self.filename = ""
+        self.directory = ""
+        self.basename = ""
+        self.extension = ""
         self.keywords = []
         self.charge = 0
         self.multiplicity = 1
@@ -23,12 +25,17 @@ class Input:
     def write_file(self):
         raise NotImplementedError()
 
+    def load_file(self,filename,directory=None):
+        raise NotImplementedError()
+
+
 class ORCAInput(Input):
     def __init__(self):
         Input.__init__(self)
         self.strings = []
         self.blocks = {}
-        
+        self.extension = '.inp'
+
     def cleanup(self):
         self.keywords = [keyword for keyword in self.keywords if keyword]
         self.strings = [string for string in self.strings if string]
@@ -37,8 +44,8 @@ class ORCAInput(Input):
     
     def write_file(self):
         self.cleanup()
-        full_path_basename = os.path.join(self.path,self.filename) 
-        with open (f'{full_path_basename}.inp','w') as file:
+        full_path= os.path.join(self.directory,self.basename) + self.extension 
+        with open (full_path,'w') as file:
             for keyword in self.keywords:
                 file.write(f'! {keyword.strip()}\n')
             file.write('\n')
@@ -53,23 +60,80 @@ class ORCAInput(Input):
             file.write('\n')
             file.write(f"* xyzfile {self.charge} {self.multiplicity} {self.xyzfile} \n\n")
 
-    
+    def load_file(self,filename,directory=None):
+        self.basename = os.path.splitext(filename)[0]
+        self.directory = directory
+        if directory:
+            filename = os.path.join(directory,filename)
+        with open(filename,'r') as input_file:
+            lines = input_file.readlines()
+             
+        self.keywords = []
+        self.blocks = {}
+        self.strings = []
+        self.charge = 0
+        self.multiplicity = 1
+        self.xyzfile = ''
+
+        in_block_flag = False
+        temp_block = ['',[]]
+        for line in lines:
+            print(line)
+            #TODO: MAKE THIS MORE FLEXIBLE TO MATCH WITH ALL ORCA SYNTAX
+            if in_block_flag:
+                if re.match(r'\s*end',line,re.I):
+                    self.blocks[temp_block[0]] = temp_block[1]
+                    in_block_flag = False
+                    temp_block[0] = ''
+                    temp_block[1] = []
+                    print(f'ending block')
+                else:
+                    print('in temp block')
+                    temp_block[1].append(line.strip())
+
+            elif re.match(r'\s*%\s*maxcore\s+\d+',line,re.I):
+                print('maxcore line found')
+                self.strings.append(line.strip())
+
+            elif re.match(r'\s*!',line):
+                line = re.match(r'(?:\s*!)(.*)',line).group(1)
+                keys = list(re.split(r'\s+',line))
+                self.keywords.extend(keys)
+                print(f'adding keywords: {keys}')
+           
+            elif re.match(r'\s*%',line):
+                name = re.match(r'(?:\s*%)(\b.+\b)',line).group(1)
+                temp_block[0] = name
+                in_block_flag = True
+                print(f'starting block with name: {name}')
+
+
+            elif re.match(r'\s*\*\s*xyz',line,re.I):
+                self.charge = int(re.search(r'(\d+)(?:\s+\d+)',line).group(1))
+                self.multiplicity = int(re.search(r'(?:\d+\s+)(\d+)',line).group(1))
+                if re.match(r'\s*\*\s*xyzfile',line,re.I):
+                    self.xyzfile = re.search(r'(\S+\.xyz\b)',line).group(1)
+                print(f'charge: {self.charge} multiplicity: {self.multiplicity} xyz fn: {self.xyzfile}')
+
 class GaussianInput(Input):
     def __init__(self):
         Input.__init__(self)
         self.nprocs = 1
         self.mem_per_cpu_gb = 2
-        self.title = "created with so and so tool"
+        self.title = "super secret special scripts shaped sthis submission sfile"
+        self.extension = ".gjf"
 
     def cleanup(self):
         self.keywords = [keyword for keyword in self.keywords if keyword]
     
     def write_file(self):
         self.cleanup()
-        full_path_basename = os.path.join(self.path,self.filename)
-        with open(f'{self.xyzfile}','r') as xyzfile:
+        full_path = os.path.join(self.directory,self.basename) + self.extension
+        #NOTE: Gaussian input assumes an xyz file in the same directory as the .gjf file to be made 
+        #full_xyz_path = os.path.join(self.directory,self.xyzfile)  
+        with open(self.xyzfile,'r') as xyzfile:
             coordinates = xyzfile.readlines()[2:]
-        with open(f'{full_path_basename}.gjf','w') as gjffile:
+        with open(full_path,'w') as gjffile:
             gjffile.write(f"%nprocshared={self.nprocs}\n")
             gjffile.write(f"%mem={self.nprocs*self.mem_per_cpu_gb}gb\n")
             gjffile.write(f"%chk={full_path_basename}.chk\n")
@@ -80,19 +144,20 @@ class GaussianInput(Input):
             gjffile.write(f"{self.charge} {self.multiplicity}\n")
             gjffile.writelines(coordinates)
             gjffile.write(f"\n\n")
-
+    
+    def load_file(self):
+        
 
 class SbatchScript:
     def __init__(self):
-        self.path = ""
-        self.filename = ""
+        self.directory = ""
+        self.basename= ""
         self.sbatch_statements = []
         self.commands = []
 
     def write_file(self):
-        if not self.path.endswith('/'):
-            self.path = f'{self.path}/'
-        with open (f'{self.path.strip()}{self.filename.strip()}.sh','w') as file:
+        full_path = os.path.join(self.directory,self.basename) + '.sh'
+        with open (full_path,'w') as file:
             file.write('#!/bin/bash\n\n')
             for statement in self.sbatch_statements:
                 file.write(f'#SBATCH {statement.strip()}\n')
@@ -103,7 +168,7 @@ class SbatchScript:
 
 class Job:
     def __init__(self):
-        self.path = "./"
+        self.directory = "./"
         self.inp = Input() #or None, or other type #this throws an exception if not replaced
         self.sh = SbatchScript()
         self.xyzpath = "./"
@@ -112,21 +177,21 @@ class Job:
     def create_directory(self):
         if not self.xyzpath.endswith('/'):
             self.xyzpath = f'{self.xyzpath}/'
-        if not self.path.endswith('/'):
-            self.path = f'{self.path}/'
+        if not self.directory.endswith('/'):
+            self.directory = f'{self.directory}/'
         
-        os.makedirs(self.path,exist_ok=True)
+        os.makedirs(self.directory,exist_ok=True)
 
-        #print(f'path: {self.path}')
-        self.inp.path = self.path
+        #print(f'path: {self.directory}')
+        self.inp.path = self.directory
         self.inp.write_file()
 
-        #print(f'sh path: {self.path}')
-        self.sh.path = self.path
+        #print(f'sh path: {self.directory}')
+        self.sh.path = self.directory
         self.sh.write_file()
 
         source_file = f'{self.xyzpath}{self.xyz}'
-        dest_file = f'{self.path}{self.xyz}'
+        dest_file = f'{self.directory}{self.xyz}'
         try:
             shutil.copyfile(source_file, dest_file)
         except Exception as e:
@@ -154,7 +219,7 @@ class InputBuilder:
     def build_submit_script(self):
         sh = SbatchScript()
         sh.path = self.config['write_directory']
-        sh.filename = self.config['job_name']
+        sh.basename = self.config['job_name']
         sh.sbatch_statements = [
             f"--job-name={self.config['job_name']}",
             f"-n {self.config['num_cores']}",
@@ -198,8 +263,8 @@ class ORCAInputBuilder(InputBuilder):
     def build_input(self):
         ################ inp options #####################
         inp = ORCAInput() 
-        inp.path = self.config['write_directory']
-        inp.filename = self.config['job_name']
+        inp.directory = self.config['write_directory']
+        inp.basename = self.config['job_name']
         
         inp.keywords = [
             'UKS' if self.config['uks'] else None,
@@ -253,8 +318,8 @@ class GaussianInputBuilder(InputBuilder):
         inp = GaussianInput()
         #TODO: FIX THIS LATER
 
-        inp.path = self.config['write_directory']
-        inp.filename = self.config['job_name']
+        inp.directory = self.config['write_directory']
+        inp.basename = self.config['job_name']
         
         inp.keywords = [
             self.config['run_type'],
